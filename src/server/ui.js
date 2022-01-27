@@ -10,15 +10,15 @@ export const onOpen = () => {
 
 export const openDialog = () => {
   const html = HtmlService.createHtmlOutputFromFile('dialog-demo')
-    .setWidth(600)
-    .setHeight(600);
+    .setWidth(1700)
+    .setHeight(1500);
   SpreadsheetApp.getUi().showModalDialog(html, 'Sheet Editor');
 };
 
 export const openDialogBootstrap = () => {
   const html = HtmlService.createHtmlOutputFromFile('dialog-demo-bootstrap')
-    .setWidth(600)
-    .setHeight(600);
+    .setWidth(1700)
+    .setHeight(1500);
   SpreadsheetApp.getUi().showModalDialog(html, 'Sheet Editor (Bootstrap)');
 };
 

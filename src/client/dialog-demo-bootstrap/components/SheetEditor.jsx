@@ -1,95 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { Button, ListGroup } from 'react-bootstrap';
-import FormInput from './FormInput.tsx';
-
-// This is a wrapper for google.script.run that lets us use promises.
+import MUIDataTable from "mui-datatables";
+import TextField from '@material-ui/core/TextField';
+import FormControl from "@material-ui/core/FormControl";
 import server from '../../utils/server';
 
 const { serverFunctions } = server;
 
-const SheetEditor = () => {
-  const [names, setNames] = useState([]);
+
+
+const Table = () => {
+  const [responsive, setResponsive] = useState("scroll");
+  const [tableBodyHeight, setTableBodyHeight] = useState("100%");
+  const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
+  const [tableData, setTableData] = useState([]);
+  const [tableHeaders, setTableHeaders] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+
 
   useEffect(() => {
+    // Call a server global function here and handle the response with .then() and .catch()
     serverFunctions
-      .getSheetsData()
-      .then(setNames)
+      .getSheetHeader('Datos')
+      .then(setTableHeaders)
       .catch(alert);
   }, []);
 
-  const deleteSheet = sheetIndex => {
+  useEffect(() => {
+    // Call a server global function here and handle the response with .then() and .catch()
     serverFunctions
-      .deleteSheet(sheetIndex)
-      .then(setNames)
+      .getSheetRows('Datos')
+      .then(setTableData)
       .catch(alert);
+  }, []);
+
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
   };
 
-  const setActiveSheet = sheetName => {
-    serverFunctions
-      .setActiveSheet(sheetName)
-      .then(setNames)
-      .catch(alert);
+  const options = {
+    filter: true,
+    filterType: "dropdown",
+    responsive,
+    tableBodyHeight,
+    tableBodyMaxHeight,
+    rowsPerPage: 100,
+    searchText: searchTerm
   };
 
-  const submitNewSheet = async newSheetName => {
-    try {
-      const response = await serverFunctions.addSheet(newSheetName);
-      setNames(response);
-    } catch (error) {
-      // eslint-disable-next-line no-alert
-      alert(error);
-    }
-  };
+  const dataOld = [
+    ["Gabby George", "Business Analyst", "Minneapolis"],
+    [
+      "Aiden Lloyd",
+      "Business Consultant for an International Company and CEO of Tony's Burger Palace",
+      "Dallas"
+    ],
+    ["Jaden Collins", "Attorney", "Santa Ana"],
+    ["Franky Rees", "Business Analyst", "St. Petersburg"],
+    ["Aaren Rose", null, "Toledo"],
+    ["Johnny Jones", "Business Analyst", "St. Petersburg"],
+    ["Jimmy Johns", "Business Analyst", "Baltimore"],
+    ["Jack Jackson", "Business Analyst", "El Paso"],
+    ["Joe Jones", "Computer Programmer", "El Paso"],
+    ["Jacky Jackson", "Business Consultant", "Baltimore"],
+    ["Jo Jo", "Software Developer", "Washington DC"],
+    ["Donna Marie", "Business Manager", "Annapolis"]
+  ];
 
   return (
-    <div style={{ padding: '3px', overflowX: 'hidden' }}>
-      <p>
-        <b>☀️ Bootstrap demo! ☀️</b>
-      </p>
-      <p>
-        This is a sample app that uses the <code>react-bootstrap</code> library
-        to help us build a simple React app. Enter a name for a new sheet, hit
-        enter and the new sheet will be created. Click the red{' '}
-        <span className="text-danger">&times;</span> next to the sheet name to
-        delete it.
-      </p>
-      <FormInput submitNewSheet={submitNewSheet} />
-      <ListGroup>
-        <TransitionGroup className="sheet-list">
-          {names.length > 0 &&
-            names.map(name => (
-              <CSSTransition
-                classNames="sheetNames"
-                timeout={500}
-                key={name.name}
-              >
-                <ListGroup.Item
-                  className="d-flex"
-                  key={`${name.index}-${name.name}`}
-                >
-                  <Button
-                    className="border-0"
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => deleteSheet(name.index)}
-                  >
-                    &times;
-                  </Button>
-                  <Button
-                    className="border-0 mx-2"
-                    variant={name.isActive ? 'success' : 'outline-success'}
-                    onClick={() => setActiveSheet(name.name)}
-                  >
-                    {name.name}
-                  </Button>
-                </ListGroup.Item>
-              </CSSTransition>
-            ))}
-        </TransitionGroup>
-      </ListGroup>
-    </div>
+    <React.Fragment>
+      <FormControl>
+      <TextField id="outlined-basic" label="Busca por cualquier campo" variant="outlined" value={searchTerm} onChange={handleChange} />
+      </FormControl>
+      <MUIDataTable
+        title={"ACME Employee list"}
+        data={tableData}
+        columns={tableHeaders}
+        options={options}
+      />
+    </React.Fragment>
   );
-};
+}
 
-export default SheetEditor;
+export default Table;

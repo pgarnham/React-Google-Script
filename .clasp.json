@@ -1,4 +1,5 @@
 {
-    "rootDir": "dist",
-    "scriptId": "...add scriptId here..."
+  "scriptId": "1zXkTzBKEjWVYpbiDhriBFuRlHV5NmKohVzTroWyQYjk3O7QTHvwcUepy",
+  "parentId": ["151uNjDDCtPAbyUC3p3S-YXMjhV256N7Ctyi-en9HWnw"],
+  "rootDir": "./dist"
 }
